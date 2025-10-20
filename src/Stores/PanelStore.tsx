@@ -7,6 +7,7 @@ import { PanelPage } from '@/Constants'
 import { SettingStore } from '@/Stores/Panel/SettingStore'
 import { SubscriptionStore } from '@/Stores/Panel/SubscriptionStore'
 import { PerformanceStore } from './Panel/PerformanceStore'
+import { FrameStore } from './Panel/FrameStore'
 
 export class PanelStoreConstructor {
   @observable selectedTabId: string = PanelPage.DDP
@@ -26,6 +27,7 @@ export class PanelStoreConstructor {
   subscriptionStore = new SubscriptionStore()
   settingStore = new SettingStore()
   performanceStore = new PerformanceStore()
+  frameStore = new FrameStore()
 
   constructor() {
     makeObservable(this)

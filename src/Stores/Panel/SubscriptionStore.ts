@@ -9,11 +9,18 @@ export class SubscriptionStore extends Searchable<IMeteorSubscription> {
   }
 
   filterFunction = (collection: IMeteorSubscription[], search: string) =>
-    collection.filter(
-      document =>
-        !search ||
-        JSON.stringify(document).toLowerCase().includes(search.toLowerCase()),
-    )
+    collection
+      .filter(
+        document =>
+          !search ||
+          JSON.stringify(document).toLowerCase().includes(search.toLowerCase()),
+      )
+      .filter(subscription => {
+        const selectedFrameId = PanelStore.frameStore.selectedFrameId
+        if (!selectedFrameId) return true
+        if (!subscription.frameInfo) return true
+        return subscription.frameInfo.frameId === selectedFrameId
+      })
 
   @computed
   get subsWithMeta() {

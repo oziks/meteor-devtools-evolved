@@ -98,6 +98,7 @@ Bridge.register('ddp-event', (message: Message<DDPLog>) => {
     size,
     sizePretty: prettyBytes(size),
     filterType,
+    frameInfo: message.frameInfo,
   }
 
   if (filterType === 'subscription') {
@@ -110,12 +111,19 @@ Bridge.register('ddp-event', (message: Message<DDPLog>) => {
 Bridge.register(
   'minimongo-get-collections',
   (message: Message<RawCollections>) => {
-    PanelStore.minimongoStore.setCollections(message.data)
+    PanelStore.minimongoStore.setCollections(message.data, message.frameInfo)
   },
 )
 
 Bridge.register('sync-subscriptions', (message: Message<any>) => {
-  PanelStore.syncSubscriptions(JSON.parse(message.data.subscriptions))
+  const subscriptions = JSON.parse(message.data.subscriptions)
+  const subscriptionsWithFrame = Object.fromEntries(
+    Object.entries(subscriptions).map(([id, sub]: [string, any]) => [
+      id,
+      { ...sub, frameInfo: message.frameInfo },
+    ]),
+  )
+  PanelStore.syncSubscriptions(subscriptionsWithFrame)
 })
 
 Bridge.register('stats', (message: Message<any>) => {
@@ -126,5 +134,13 @@ Bridge.register('stats', (message: Message<any>) => {
 })
 
 Bridge.register('meteor-data-performance', (message: Message<CallData>) => {
-  PanelStore.performanceStore.push(message.data)
+  PanelStore.performanceStore.push({
+    ...message.data,
+    frameInfo: message.frameInfo,
+  })
+})
+
+Bridge.register('frame-detected', (message: Message<FrameInfo>) => {
+  PanelStore.frameStore.addFrame(message.data)
+  setTimeout(() => syncSubscriptions(), 100)
 })

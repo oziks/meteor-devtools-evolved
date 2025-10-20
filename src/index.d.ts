@@ -24,10 +24,18 @@ type EventType =
   | 'stats'
   | 'meteor-data-performance'
   | 'cache:clear'
+  | 'frame-detected'
+
+interface FrameInfo {
+  frameId: string
+  url: string
+  isTop: boolean
+}
 
 interface Message<T> {
   eventType: EventType
   data: T
+  frameInfo?: FrameInfo
 }
 
 interface IMessagePayload<T> extends Message<T> {
@@ -74,6 +82,7 @@ interface DDPLog {
   host?: string
   filterType?: FilterType | null
   preview?: string
+  frameInfo?: FrameInfo
 }
 
 interface Bookmark {
@@ -129,6 +138,7 @@ interface IDocumentWrapper {
   document: IDocument
   _string: string
   _size: number
+  frameInfo?: FrameInfo
 }
 
 interface IGitHubRepository {
@@ -249,6 +259,7 @@ interface IMeteorSubscription {
   params: any[]
   inactive: boolean
   ready: boolean
+  frameInfo?: FrameInfo
 }
 
 interface ICollectionMetadata {
@@ -263,4 +274,5 @@ type CallData = {
   key: string
   args: string
   runtime: number
+  frameInfo?: FrameInfo
 }

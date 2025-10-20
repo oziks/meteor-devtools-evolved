@@ -13,6 +13,12 @@ const isFrame = (function () {
   }
 })()
 
+const frameInfo: FrameInfo = {
+  frameId: `frame_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+  url: window.location.href,
+  isTop: !isFrame,
+}
+
 const PARENTHESIS_REGEX = /(\S*) \(([^)]+)\)/
 
 export const sendMessage = (eventType: EventType, data: object) => {
@@ -20,6 +26,7 @@ export const sendMessage = (eventType: EventType, data: object) => {
     {
       eventType,
       data,
+      frameInfo,
       source: 'meteor-devtools-evolved',
     } as Message<object>,
     '*',
@@ -119,8 +126,6 @@ export const Registry: IRegistry = {
 
 export function injectAll() {
   if (!window.__meteor_devtools_evolved) {
-    if (isFrame) return false
-
     warning(
       isFrame
         ? `Initializing from iframe "${location.href}"...`
@@ -144,6 +149,20 @@ export function injectAll() {
           Registry.run.bind(Registry)
 
         warning(`Initialized. Attempts: ${100 - attempts}.`)
+
+        sendMessage('frame-detected', {
+          frameId: frameInfo.frameId,
+          url: frameInfo.url,
+          isTop: frameInfo.isTop,
+        })
+
+        if (isFrame) {
+          Registry.run({
+            eventType: 'sync-subscriptions',
+            data: {},
+            source: 'meteor-devtools-evolved',
+          } as IMessagePayload<any>)
+        }
       }
 
       if (attempts === 0) {

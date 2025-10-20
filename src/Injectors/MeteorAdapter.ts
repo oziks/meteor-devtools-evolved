@@ -9,11 +9,13 @@ export const MeteorAdapter = () => {
     Meteor.call(method, ...params)
   })
 
-  Registry.register('sync-subscriptions', () => {
+  const syncSubs = () => {
     sendMessage('sync-subscriptions', {
       subscriptions: getSubscriptions(),
     })
-  })
+  }
+
+  Registry.register('sync-subscriptions', syncSubs)
 
   Registry.register('stats', () => {
     sendMessage('stats', {
@@ -24,6 +26,16 @@ export const MeteorAdapter = () => {
   Registry.register('cache:clear', () => {
     sendMessage('cache:clear', {})
   })
+
+  // Auto-sync subscriptions periodically for iframes
+  // since inspectedWindow.eval() can't reach them
+  const isFrame = window.self !== window.top
+  if (isFrame) {
+    // Initial sync
+    setTimeout(syncSubs, 1000)
+    // Periodic sync every 2 seconds
+    setInterval(syncSubs, 2000)
+  }
 
   const prototype = Mongo.Collection.prototype
 

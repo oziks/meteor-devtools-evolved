@@ -14,7 +14,7 @@ export const useBreakpoints = () => {
     md: width <= 1280,
     lg: width <= 1920,
     xl: width > 1920,
-    navigationCollapse: width <= 980,
+    navigationCollapse: width <= 1100,
   }
 
   return breakpoints

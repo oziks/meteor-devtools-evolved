@@ -70,9 +70,15 @@ interface Props {
   tabs: ITab[]
   menu?: IMenuItem[]
   onChange?: (key: string) => void
+  frameSelector?: JSX.Element
 }
 
-export const TabBar: FunctionComponent<Props> = ({ tabs, menu, onChange }) => {
+export const TabBar: FunctionComponent<Props> = ({
+  tabs,
+  menu,
+  onChange,
+  frameSelector,
+}) => {
   const [activeKey, setKey] = useState(tabs[0].key)
 
   const { navigationCollapse } = useBreakpoints()
@@ -129,6 +135,8 @@ export const TabBar: FunctionComponent<Props> = ({ tabs, menu, onChange }) => {
           {tab.content}
         </Button>
       ))}
+
+      {frameSelector}
 
       <div className='right-menu'>{rightMenu}</div>
     </TabBarWrapper>

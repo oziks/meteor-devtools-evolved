@@ -8,6 +8,7 @@ import { Tag } from '@blueprintjs/core'
 import { isNumber } from 'lodash'
 import { useAnalytics } from '@/Utils/Hooks/useAnalytics'
 import { openTab } from '@/Utils/BackgroundEvents'
+import { FrameSelector } from '@/Components/FrameSelector'
 
 export const Navigation: FunctionComponent = observer(() => {
   const panelStore = usePanelStore()
@@ -139,6 +140,7 @@ export const Navigation: FunctionComponent = observer(() => {
         tabs={tabs}
         menu={menu}
         onChange={key => panelStore.setSelectedTabId(key)}
+        frameSelector={<FrameSelector />}
       />
     </div>
   )

@@ -87,10 +87,10 @@ export class MinimongoStore {
   }
 
   @action
-  setCollections(collections: RawCollections) {
+  setCollections(collections: RawCollections, frameInfo?: FrameInfo) {
     this.collections = mapValues(collections, (collection, collectionName) => {
       return collection.map(document =>
-        MinimongoStore.wrapDocument(document, collectionName),
+        MinimongoStore.wrapDocument(document, collectionName, frameInfo),
       )
     })
 
@@ -119,6 +119,7 @@ export class MinimongoStore {
   static wrapDocument(
     document: IDocument,
     collectionName: string,
+    frameInfo?: FrameInfo,
   ): IDocumentWrapper {
     const _string = JSONUtils.stringify(document)
 
@@ -129,6 +130,7 @@ export class MinimongoStore {
       document,
       _string,
       _size: StringUtils.getSize(_string),
+      frameInfo,
     }
   }
 }

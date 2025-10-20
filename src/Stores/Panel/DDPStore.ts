@@ -55,6 +55,12 @@ export class DDPStore extends Searchable<DDPLog> {
             .concat(log.preview ?? '')
             .includes(search.toLowerCase()),
       )
+      .filter(log => {
+        const selectedFrameId = PanelStore.frameStore.selectedFrameId
+        if (!selectedFrameId) return true
+        if (!log.frameInfo) return true
+        return log.frameInfo.frameId === selectedFrameId
+      })
 
   @action
   clearLogs() {
